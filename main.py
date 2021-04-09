@@ -11,7 +11,7 @@ FONT_COLOR = (255, 255, 255)
 
 class Apple:
     def __init__(self, surface):
-        self.image = pygame.image.load("images/snake.png").convert()
+        self.image = pygame.image.load("images/apple.png").convert()
         self.image = pygame.transform.scale(self.image, (BLOCK_SIZE, BLOCK_SIZE))
 
         self.surface = surface
@@ -88,6 +88,7 @@ class Game:
 
         pygame.mixer.init()
         self.play_background_music()
+        pygame.mixer.music.set_volume(0.3)
 
         self.surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.render_background()
@@ -109,6 +110,7 @@ class Game:
     # noinspection PyMethodMayBeStatic
     def play_sound(self, sound):
         music = pygame.mixer.Sound(f"sounds/{sound}.wav")
+        music.set_volume(0.3)
         music.play()
 
     # noinspection PyMethodMayBeStatic
@@ -138,6 +140,17 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.play_sound("quack")
                 raise Exception("Game over")
+
+        # Cross The Map Boundary
+        if self.snake.x[0] == SCREEN_WIDTH:
+            self.snake.x[0] = 0
+        if self.snake.x[0] == - BLOCK_SIZE:
+            self.snake.x[0] = SCREEN_WIDTH
+
+        if self.snake.y[0] == SCREEN_HEIGHT:
+            self.snake.y[0] = 0
+        if self.snake.y[0] == - BLOCK_SIZE:
+            self.snake.y[0] = 0
 
     def display_score(self):
         font = pygame.font.SysFont('arial', 30)
