@@ -6,8 +6,7 @@ import random
 BLOCK_SIZE = 20
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
-BACKGROUND_COLOR = (255, 255, 100)
-FONT_COLOR = (0, 0, 0)
+FONT_COLOR = (255, 255, 255)
 
 
 class Apple:
@@ -46,7 +45,6 @@ class Snake:
         self.y.append(-1)
 
     def draw(self):
-        self.surface.fill(BACKGROUND_COLOR)
         for i in range(self.size):
             self.surface.blit(self.block, (self.x[i], self.y[i]))
         pygame.display.flip()
@@ -89,9 +87,10 @@ class Game:
         pygame.display.set_caption("Snake Game")
 
         pygame.mixer.init()
+        self.play_background_music()
 
         self.surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.surface.fill(BACKGROUND_COLOR)
+        self.render_background()
 
         self.snake = Snake(self.surface, 2)
         self.snake.draw()
@@ -112,7 +111,17 @@ class Game:
         music = pygame.mixer.Sound(f"sounds/{sound}.wav")
         music.play()
 
+    # noinspection PyMethodMayBeStatic
+    def play_background_music(self):
+        pygame.mixer.music.load("sounds/background.wav")
+        pygame.mixer.music.play()
+
+    def render_background(self):
+        background = pygame.image.load("images/background.jpg")
+        self.surface.blit(background, (0, 0))
+
     def play(self):
+        self.render_background()
         self.snake.walk()
         self.apple.draw()
         self.display_score()
@@ -136,7 +145,7 @@ class Game:
         self.surface.blit(score, (SCREEN_WIDTH - 180, SCREEN_HEIGHT - (SCREEN_HEIGHT - 20)))
 
     def show_game_over(self):
-        self.surface.fill(BACKGROUND_COLOR)
+        self.render_background()
         font = pygame.font.SysFont('arial', 20)
 
         line1 = font.render(f"Game over! Your score was: {self.snake.size}", True, FONT_COLOR)
