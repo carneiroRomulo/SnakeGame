@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import time
+import random
 
 BLOCK_SIZE = 20
 SCREEN_X_SIZE = 600
@@ -20,6 +21,10 @@ class Apple:
         self.surface.blit(self.image, (self.x, self.y))
         pygame.display.flip()
 
+    def move(self):
+        self.x = random.randint(0, int(SCREEN_X_SIZE / BLOCK_SIZE)) * BLOCK_SIZE
+        self.y = random.randint(0, int(SCREEN_Y_SIZE / BLOCK_SIZE)) * BLOCK_SIZE
+
 
 class Snake:
     def __init__(self, surface, size):
@@ -32,6 +37,11 @@ class Snake:
         self.direction = 'down'
         self.x = [BLOCK_SIZE]*self.size
         self.y = [BLOCK_SIZE]*self.size
+
+    def increase_size(self):
+        self.size += 1
+        self.x.append(-1)
+        self.y.append(-1)
 
     def draw(self):
         self.surface.fill((255, 255, 100))
@@ -77,15 +87,27 @@ class Game:
         self.surface = pygame.display.set_mode((SCREEN_X_SIZE, SCREEN_Y_SIZE))
         self.surface.fill((255, 255, 100))
 
-        self.snake = Snake(self.surface, 10)
+        self.snake = Snake(self.surface, 2)
         self.snake.draw()
 
         self.apple = Apple(self.surface)
         self.apple.draw()
 
+    # noinspection PyMethodMayBeStatic
+    def is_collision(self, x1, y1, x2, y2):
+        if x2 <= x1 < x2 + BLOCK_SIZE:
+            if y2 <= y1 < y2 + BLOCK_SIZE:
+                return True
+
+        return False
+
     def play(self):
         self.snake.walk()
         self.apple.draw()
+
+        if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
+            self.snake.increase_size()
+            self.apple.move()
 
     def run(self):
         running = True
