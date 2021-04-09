@@ -22,8 +22,8 @@ class Apple:
         pygame.display.flip()
 
     def move(self):
-        self.x = random.randint(0, int(SCREEN_X_SIZE / BLOCK_SIZE)) * BLOCK_SIZE
-        self.y = random.randint(0, int(SCREEN_Y_SIZE / BLOCK_SIZE)) * BLOCK_SIZE
+        self.x = random.randint(1, int(SCREEN_X_SIZE / BLOCK_SIZE) - 1) * BLOCK_SIZE
+        self.y = random.randint(1, int(SCREEN_Y_SIZE / BLOCK_SIZE) - 1) * BLOCK_SIZE
 
 
 class Snake:
@@ -104,10 +104,17 @@ class Game:
     def play(self):
         self.snake.walk()
         self.apple.draw()
+        self.display_score()
+        pygame.display.flip()
 
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
             self.snake.increase_size()
             self.apple.move()
+
+    def display_score(self):
+        font = pygame.font.SysFont('arial', 30)
+        score = font.render(f"Score: {self.snake.size}", True, (200, 200, 200))
+        self.surface.blit(score, (SCREEN_X_SIZE - 180, SCREEN_Y_SIZE - (SCREEN_Y_SIZE - 20)))
 
     def run(self):
         running = True
